@@ -289,11 +289,6 @@ int check_boot_img_header(t_abootimg* img)
     return 1;
   }
 
-  if (!(img->header.ramdisk_size)) {
-    fprintf(stderr, "%s: ramdisk size is null\n", img->fname);
-    return 1;
-  }
-
   unsigned page_size = img->header.page_size;
   if (!page_size) {
     fprintf(stderr, "%s: Image page size is null\n", img->fname);
@@ -557,8 +552,7 @@ void update_images(t_abootimg *img)
     char* r = malloc(rsize);
     if (!r)
       abort_perror("");
-    size_t rb = fread(r, rsize, 1, stream);
-    if ((rb!=1) || ferror(stream))
+    if (ferror(stream))
       abort_perror(img->ramdisk_fname);
     else if (feof(stream))
       abort_printf("%s: cannot read ramdisk\n", img->ramdisk_fname);
